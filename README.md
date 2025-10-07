@@ -50,7 +50,7 @@ Por sencillez, este prototipo usa el **marcador Hiro**. Opciones:
 
 ## QR por máquina
 Genera un QR por máquina con la URL respectiva, por ejemplo:
-- `https://tu-dominio/ar/?machine=empaquetadora-01`
+- `https://realidad-aumentada-mocha.vercel.app/?machine=empaquetadora-01`
 - `https://tu-dominio/ar/?machine=embotelladora-02`
 
 Puedes usar cualquier generador (ej. `qr-code-generator.com`) o desde la terminal:

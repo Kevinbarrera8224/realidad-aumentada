@@ -47,12 +47,14 @@
   </head>
 
   <body>
+    <!-- Botones -->
     <div id="hud">
       <button id="showImageBtn">Imagen</button>
       <button id="showVideoBtn">Video</button>
       <button id="muteBtn">Silencio</button>
     </div>
 
+    <!-- Escena AR sin marcador -->
     <a-scene
       embedded
       vr-mode-ui="enabled: false"
@@ -60,12 +62,12 @@
     >
       <a-entity camera></a-entity>
 
-      <!-- Contenedor -->
-      <a-entity id="panelRoot" position="0 0 -1.1">
+      <!-- Contenedor más pequeño y centrado -->
+      <a-entity id="panelRoot" position="0 0.1 -1.1">
         <a-plane
           id="imagePlane"
-          width="0.65"
-          height="0.36"
+          width="0.5"
+          height="0.28"
           visible="false"
           material="shader: flat; transparent: true; opacity: 1; side: double;"
           shadow="receive: false"
@@ -75,8 +77,8 @@
 
         <a-plane
           id="videoPlane"
-          width="0.65"
-          height="0.36"
+          width="0.5"
+          height="0.28"
           visible="false"
           material="shader: flat; transparent: true; opacity: 1; side: double;"
           shadow="receive: false"
@@ -86,6 +88,7 @@
       </a-entity>
     </a-scene>
 
+    <!-- Video oculto -->
     <video
       id="incidentVideo"
       playsinline

@@ -53,7 +53,6 @@
       <button id="muteBtn">Silencio</button>
     </div>
 
-    <!-- Escena sin marcador -->
     <a-scene
       embedded
       vr-mode-ui="enabled: false"
@@ -61,27 +60,32 @@
     >
       <a-entity camera></a-entity>
 
-      <!-- Contenedor de imagen/video -->
-      <a-entity id="panelRoot" position="0 0 -1.2">
+      <!-- Contenedor -->
+      <a-entity id="panelRoot" position="0 0 -1.1">
         <a-plane
           id="imagePlane"
-          width="0.75"
-          height="0.42"
+          width="0.65"
+          height="0.36"
           visible="false"
+          material="shader: flat; transparent: true; opacity: 1; side: double;"
+          shadow="receive: false"
           position="0 0 0.01"
+          radius="0.05"
         ></a-plane>
 
         <a-plane
           id="videoPlane"
-          width="0.75"
-          height="0.42"
+          width="0.65"
+          height="0.36"
           visible="false"
+          material="shader: flat; transparent: true; opacity: 1; side: double;"
+          shadow="receive: false"
           position="0 0 0.01"
+          radius="0.05"
         ></a-plane>
       </a-entity>
     </a-scene>
 
-    <!-- Video oculto -->
     <video
       id="incidentVideo"
       playsinline
@@ -102,7 +106,6 @@
 
       let incidents = [];
       let muted = true;
-      let currentMedia = "image";
 
       const imagePlane = document.getElementById("imagePlane");
       const videoPlane = document.getElementById("videoPlane");

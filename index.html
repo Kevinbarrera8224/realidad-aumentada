@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Info AR de Incidentes — Grupo Modelo</title>
 
-    <!-- A-Frame y AR.js -->
+    <!-- Librerías de A-Frame y AR.js -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
 
@@ -88,7 +88,7 @@
   </head>
 
   <body>
-    <!-- HUD (encabezado de control) -->
+    <!-- HUD -->
     <div id="hud">
       <div id="machinePill" class="pill">Cargando máquina…</div>
       <div id="controls">
@@ -104,77 +104,64 @@
     <div id="toast"></div>
     <div class="credit">AR.js • A-Frame</div>
 
-    <!-- Escena AR -->
+    <!-- Escena AR sin marcador -->
     <a-scene
       vr-mode-ui="enabled:false"
       embedded
       renderer="logarithmicDepthBuffer: true"
-      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+      arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
     >
       <!-- Cámara -->
       <a-entity camera></a-entity>
 
-      <!-- Marcador personalizado -->
+      <!-- Panel flotante -->
+      <a-entity id="panelRoot" position="0 0 -1">
+        <a-plane
+          id="panelBg"
+          width="1.3"
+          height="0.8"
+          color="#111"
+          opacity="0.8"
+          position="0 0.2 0"
+        ></a-plane>
 
-<!-- PRUEBA -->
-<a-marker preset="hiro" emitevents="true" id="marker">
+        <a-entity
+          id="titleText"
+          text="value: Incidente; width: 1.5; color: #FFD54F; anchor: center; baseline: top; wrapCount: 32"
+          position="0 0.52 0.01"
+        ></a-entity>
 
-        <a-entity id="panelRoot" position="0 0 0">
-          <a-plane
-            id="panelBg"
-            width="1.3"
-            height="0.8"
-            color="#111"
-            opacity="0.8"
-            position="0 0.2 0"
-          ></a-plane>
+        <a-entity
+          id="summaryText"
+          text="value: ; width: 1.2; color: #FFFFFF; anchor: center; baseline: top; wrapCount: 36"
+          position="0 0.28 0.01"
+        ></a-entity>
 
-          <a-entity
-            id="titleText"
-            text="value: Incidente; width: 1.5; color: #FFD54F; anchor: center; baseline: top; wrapCount: 32"
-            position="0 0.52 0.01"
-          ></a-entity>
+        <a-entity
+          id="recoText"
+          text="value: ; width: 1.2; color: #B3E5FC; anchor: center; baseline: top; wrapCount: 36"
+          position="0 0.02 0.01"
+        ></a-entity>
 
-          <a-entity
-            id="summaryText"
-            text="value: ; width: 1.2; color: #FFFFFF; anchor: center; baseline: top; wrapCount: 36"
-            position="0 0.28 0.01"
-          ></a-entity>
+        <a-plane
+          id="imagePlane"
+          width="0.9"
+          height="0.51"
+          position="0 -0.33 0.011"
+          visible="false"
+        ></a-plane>
 
-          <a-entity
-            id="recoText"
-            text="value: ; width: 1.2; color: #B3E5FC; anchor: center; baseline: top; wrapCount: 36"
-            position="0 0.02 0.01"
-          ></a-entity>
-
-          <!-- Imagen y video -->
-          <a-plane
-            id="imagePlane"
-            width="0.9"
-            height="0.51"
-            position="0 -0.33 0.011"
-            visible="false"
-          ></a-plane>
-
-          <a-plane
-            id="videoPlane"
-            width="0.9"
-            height="0.51"
-            position="0 -0.33 0.01"
-            visible="false"
-          ></a-plane>
-        </a-entity>
-      </a-marker>
-
-      <a-entity
-        id="noMarkerHint"
-        position="0 1.6 -2"
-        text="value: Apunta el marcador de Grupo Modelo; width: 2.5; color: #ffffff"
-      ></a-entity>
-
-      <a-entity camera></a-entity>
+        <a-plane
+          id="videoPlane"
+          width="0.9"
+          height="0.51"
+          position="0 -0.33 0.01"
+          visible="false"
+        ></a-plane>
+      </a-entity>
     </a-scene>
 
+    <!-- Video invisible (fuente para el plano de video) -->
     <video
       id="incidentVideo"
       playsinline
@@ -210,7 +197,6 @@
       let muted = true;
       let currentMedia = "auto";
 
-      const marker = document.getElementById("marker");
       const panelRoot = document.getElementById("panelRoot");
       const titleText = document.getElementById("titleText");
       const summaryText = document.getElementById("summaryText");
@@ -330,21 +316,9 @@
         applyIncident(idx);
       };
 
-      marker.addEventListener("markerFound", () => {
-        document.getElementById("noMarkerHint").setAttribute("visible", false);
-        showToast("Marcador detectado");
-        if (!muted && videoEl.src)
-          try {
-            videoEl.play();
-          } catch (e) {}
-      });
-      marker.addEventListener("markerLost", () => {
-        document.getElementById("noMarkerHint").setAttribute("visible", true);
-        if (videoEl.src)
-          try {
-            videoEl.pause();
-          } catch (e) {}
-      });
+      // Mostrar el panel siempre visible
+      panelRoot.setAttribute("visible", true);
+      panelRoot.setAttribute("position", "0 0 -1");
 
       loadData();
     </script>

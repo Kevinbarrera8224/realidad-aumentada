@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Info AR — Grupo Modelo</title>
+    <title>AR Multimedia — Grupo Modelo</title>
 
-    <!-- A-Frame + AR.js -->
+    <!-- Librerías -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
 
@@ -13,7 +13,8 @@
       body {
         margin: 0;
         overflow: hidden;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: #000;
+        font-family: system-ui, -apple-system, sans-serif;
       }
 
       #hud {
@@ -23,26 +24,9 @@
         right: 0;
         padding: 8px 12px;
         display: flex;
-        gap: 8px;
-        align-items: center;
-        justify-content: space-between;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
-        color: white;
+        justify-content: center;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent);
         z-index: 5;
-        flex-wrap: wrap;
-      }
-
-      #hud .pill {
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(6px);
-      }
-
-      #controls {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
       }
 
       button {
@@ -50,114 +34,54 @@
         background: rgba(255, 255, 255, 0.85);
         color: #111;
         padding: 6px 10px;
-        border-radius: 10px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
+        margin: 0 4px;
       }
 
       button:active {
         transform: translateY(1px);
-      }
-
-      #toast {
-        position: fixed;
-        bottom: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 8px 10px;
-        border-radius: 8px;
-        font-size: 14px;
-        z-index: 5;
-        display: none;
-      }
-
-      .credit {
-        position: fixed;
-        bottom: 6px;
-        right: 10px;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 12px;
-      }
-
-      .hidden {
-        display: none;
       }
     </style>
   </head>
 
   <body>
     <div id="hud">
-      <div id="machinePill" class="pill">Cargando máquina…</div>
-      <div id="controls">
-        <button id="prevBtn">◀</button>
-        <button id="nextBtn">▶</button>
-        <button id="toggleBtn">Ocultar panel</button>
-        <button id="muteBtn">Silencio</button>
-        <button id="showImageBtn" class="hidden">Imagen</button>
-        <button id="showVideoBtn" class="hidden">Video</button>
-      </div>
+      <button id="showImageBtn">Imagen</button>
+      <button id="showVideoBtn">Video</button>
+      <button id="muteBtn">Silencio</button>
     </div>
 
-    <div id="toast"></div>
-    <div class="credit">AR.js • A-Frame</div>
-
+    <!-- Escena sin marcador -->
     <a-scene
       embedded
+      vr-mode-ui="enabled: false"
       arjs="sourceType: webcam; debugUIEnabled: false;"
-      vr-mode-ui="enabled:false"
     >
       <a-entity camera></a-entity>
 
-      <!-- Panel más pequeño y centrado -->
-      <a-entity id="panelRoot" position="0 0.2 -1">
-        <a-plane
-          id="panelBg"
-          width="0.8"
-          height="0.55"
-          color="#111"
-          opacity="0.85"
-          position="0 0.15 0"
-        ></a-plane>
-
-        <a-entity
-          id="titleText"
-          text="value: Incidente; width: 1; color: #FFD54F; anchor: center; baseline: top; wrapCount: 36"
-          position="0 0.35 0.01"
-        ></a-entity>
-
-        <a-entity
-          id="summaryText"
-          text="value: ; width: 0.9; color: #FFFFFF; anchor: center; baseline: top; wrapCount: 40; align: justify"
-          position="0 0.18 0.01"
-        ></a-entity>
-
-        <a-entity
-          id="recoText"
-          text="value: ; width: 0.9; color: #B3E5FC; anchor: center; baseline: top; wrapCount: 40; align: justify"
-          position="0 0.02 0.01"
-        ></a-entity>
-
+      <!-- Contenedor principal -->
+      <a-entity id="panelRoot" position="0 0 -1.2">
         <a-plane
           id="imagePlane"
-          width="0.6"
-          height="0.34"
-          position="0 -0.25 0.011"
+          width="0.9"
+          height="0.5"
           visible="false"
+          position="0 0 0.01"
         ></a-plane>
 
         <a-plane
           id="videoPlane"
-          width="0.6"
-          height="0.34"
-          position="0 -0.25 0.01"
+          width="0.9"
+          height="0.5"
           visible="false"
+          position="0 0 0.01"
         ></a-plane>
       </a-entity>
     </a-scene>
 
-    <!-- Video oculto (fuente para plano) -->
+    <!-- Video oculto -->
     <video
       id="incidentVideo"
       playsinline
@@ -171,139 +95,62 @@
       const machineId = qs.get("machine") || "empaquetadora-01";
 
       const ui = {
-        pill: document.getElementById("machinePill"),
-        toast: document.getElementById("toast"),
-        prev: document.getElementById("prevBtn"),
-        next: document.getElementById("nextBtn"),
-        toggle: document.getElementById("toggleBtn"),
-        mute: document.getElementById("muteBtn"),
         showImage: document.getElementById("showImageBtn"),
         showVideo: document.getElementById("showVideoBtn"),
+        mute: document.getElementById("muteBtn"),
       };
 
-      function showToast(msg, ms = 1500) {
-        ui.toast.textContent = msg;
-        ui.toast.style.display = "block";
-        setTimeout(() => (ui.toast.style.display = "none"), ms);
-      }
-
       let incidents = [];
-      let idx = 0;
-      let panelVisible = true;
       let muted = true;
-      let currentMedia = "auto";
+      let currentMedia = "image";
 
-      const panelRoot = document.getElementById("panelRoot");
-      const titleText = document.getElementById("titleText");
-      const summaryText = document.getElementById("summaryText");
-      const recoText = document.getElementById("recoText");
-      const videoPlane = document.getElementById("videoPlane");
       const imagePlane = document.getElementById("imagePlane");
+      const videoPlane = document.getElementById("videoPlane");
       const videoEl = document.getElementById("incidentVideo");
 
       videoEl.addEventListener("loadeddata", () => {
         videoPlane.setAttribute("material", "shader: flat; src: #incidentVideo");
-        videoEl.play();
       });
-
-      function setMediaVisibility({ showImage, showVideo }) {
-        imagePlane.setAttribute("visible", !!showImage);
-        videoPlane.setAttribute("visible", !!showVideo);
-        if (showVideo) {
-          videoEl.play().catch(() => {});
-        } else {
-          videoEl.pause();
-        }
-      }
-
-      function updateMediaButtons(it) {
-        ui.showImage.classList.toggle("hidden", !it.imagen);
-        ui.showVideo.classList.toggle("hidden", !it.video);
-      }
-
-      function applyIncident(i) {
-        const it = incidents[i];
-        titleText.setAttribute("text", "value", `${it.fecha} — ${it.titulo}`);
-        summaryText.setAttribute("text", "value", it.resumen);
-        recoText.setAttribute(
-          "text",
-          "value",
-          "Recomendación: " + it.recomendacion
-        );
-
-        if (it.imagen)
-          imagePlane.setAttribute("material", "shader: flat; src: " + it.imagen);
-        if (it.video) {
-          videoEl.src = it.video;
-          videoEl.muted = muted;
-          videoEl.currentTime = 0;
-        }
-
-        updateMediaButtons(it);
-
-        if (currentMedia === "image" && it.imagen) {
-          setMediaVisibility({ showImage: true, showVideo: false });
-        } else if (currentMedia === "video" && it.video) {
-          setMediaVisibility({ showImage: false, showVideo: true });
-        } else {
-          if (it.imagen) {
-            setMediaVisibility({ showImage: true, showVideo: false });
-          } else if (it.video) {
-            setMediaVisibility({ showImage: false, showVideo: true });
-          } else {
-            setMediaVisibility({ showImage: false, showVideo: false });
-          }
-        }
-
-        ui.pill.textContent = `Máquina: ${it.maquina}  •  Incidente ${
-          i + 1
-        }/${incidents.length}`;
-      }
 
       async function loadData() {
         try {
           const res = await fetch("data/incidents.json", { cache: "no-store" });
           const all = await res.json();
           incidents = (all[machineId] || all["empaquetadora-01"]).incidentes;
-          ui.pill.textContent = `Máquina: ${
-            (all[machineId] || all["empaquetadora-01"]).nombre
-          }`;
-          applyIncident(0);
+          const it = incidents[0];
+
+          if (it.imagen) {
+            imagePlane.setAttribute("material", "shader: flat; src: " + it.imagen);
+            imagePlane.setAttribute("visible", true);
+          }
+
+          if (it.video) {
+            videoEl.src = it.video;
+            videoEl.muted = muted;
+            videoPlane.setAttribute("material", "shader: flat; src: #incidentVideo");
+          }
         } catch (e) {
-          console.error(e);
-          showToast("No pude cargar los incidentes.");
+          console.error("Error al cargar datos:", e);
         }
       }
 
-      ui.prev.onclick = () => {
-        idx = (idx - 1 + incidents.length) % incidents.length;
-        applyIncident(idx);
+      ui.showImage.onclick = () => {
+        imagePlane.setAttribute("visible", true);
+        videoPlane.setAttribute("visible", false);
+        videoEl.pause();
       };
-      ui.next.onclick = () => {
-        idx = (idx + 1) % incidents.length;
-        applyIncident(idx);
+
+      ui.showVideo.onclick = () => {
+        imagePlane.setAttribute("visible", false);
+        videoPlane.setAttribute("visible", true);
+        videoEl.play().catch(() => {});
       };
-      ui.toggle.onclick = () => {
-        panelVisible = !panelVisible;
-        panelRoot.setAttribute("visible", panelVisible);
-        ui.toggle.textContent = panelVisible ? "Ocultar panel" : "Mostrar panel";
-      };
+
       ui.mute.onclick = () => {
         muted = !muted;
         videoEl.muted = muted;
         ui.mute.textContent = muted ? "Silencio" : "Con sonido";
       };
-      ui.showImage.onclick = () => {
-        currentMedia = "image";
-        applyIncident(idx);
-      };
-      ui.showVideo.onclick = () => {
-        currentMedia = "video";
-        applyIncident(idx);
-      };
-
-      panelRoot.setAttribute("visible", true);
-      panelRoot.setAttribute("position", "0 0.2 -1");
 
       loadData();
     </script>

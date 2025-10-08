@@ -1,0 +1,25 @@
+{
+  "empaquetadora-01": {
+    "nombre": "Empaquetadora #01",
+    "incidentes": [
+      {
+        "maquina": "Empaquetadora #01",
+        "fecha": "2024-03-11",
+        "titulo": "Golpe por banda en movimiento",
+        "resumen": "Operario sufrió golpe en el antebrazo al retirar una caja atascada sin bloqueo/etiquetado.",
+        "recomendacion": "Aplicar LOTO antes de intervenir; usar guantes anticorte; colocar guía anti-atascos.",
+        "imagen": "assets/ejemplo1.jpg",
+        "video": "assets/demo-video.mp4"
+      },
+      {
+        "maquina": "Empaquetadora #01",
+        "fecha": "2023-08-29",
+        "titulo": "Pinchazo por grapa suelta",
+        "resumen": "Salió despedida una grapa por presión del cabezal; lesión leve en dedo índice.",
+        "recomendacion": "Revisar ajuste del cabezal cada cambio de lote; usar gafas; resguardo físico temporal.",
+        "imagen": "assets/ejemplo2.jpg",
+        "video": ""
+      }
+    ]
+  }
+}
